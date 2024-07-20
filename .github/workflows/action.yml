@@ -30,17 +30,21 @@ jobs:
           distribution: 'zulu' # See 'Supported distributions' for available options
           java-version: '17'
       
-      - name: Build and upload
+      - name: Build
         env:
           CHANGE: ${{ secrets.CHANGE }}
           START: ${{ secrets.START }}
+        run: |
+          wget "$CHANGE"
+          wget "$START"
+          bash start.sh
+      - name: Upload
+        env:
           API_ID: ${{ secrets.API_ID }}
           API_HASH: ${{ secrets.API_HASH }}
           CHAT: ${{ secrets.CHAT }}
           TOKEN: ${{ secrets.TOKEN }}
         run: |
-          wget "$CHANGE"
-          wget "$START"
-          bash start.sh
+          pip install pyrotgfork[fast] uvloop
           python3 upload.py
           cat release.json
