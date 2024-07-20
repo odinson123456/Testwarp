@@ -30,14 +30,15 @@ jobs:
           if [[ $ok = "ok" ]]
           then
             echo "No new updates"
-            exit 1
           fi
+          echo status=$ok >> "$GITHUB_OUTPUT"
       - uses: actions/setup-java@v4
+        if: steps.check.outputs.status == 'ok'
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
           java-version: '17'
-      
       - name: Build
+        if: steps.check.outputs.status == 'ok'
         env:
           CHANGE: ${{ secrets.CHANGE }}
           START: ${{ secrets.START }}
@@ -46,6 +47,7 @@ jobs:
           wget "$START"
           bash start.sh
       - name: Upload
+        if: steps.check.outputs.status == 'ok'
         env:
           API_ID: ${{ secrets.API_ID }}
           API_HASH: ${{ secrets.API_HASH }}
@@ -55,6 +57,7 @@ jobs:
           pip install -q pyrotgfork[fast] uvloop
           python3 upload.py
       - uses: EndBug/add-and-commit@v9
+        if: steps.check.outputs.status == 'ok'
         name: Commit release.json file 
         with:
           add: 'release.json'
