@@ -17,8 +17,8 @@ jobs:
       - name: Check update
         id: check
         run: |
-          echo ${{ secrets.CHECK }} >> check.py
-          pip install requests
+          echo "${{ secrets.CHECK }}" >> check.py
+          #pip install requests
           ok=$(python3 check.py)
           if [[ $ok = "ok" ]]
           then
@@ -39,6 +39,6 @@ jobs:
 #          CHAT: ${{ secrets.CHAT }}
 #          TOKEN: ${{ secrets.TOKEN }}
         run: |
-          wget $CHANGE
-          wget $START
+          wget "$CHANGE"
+          wget "$START"
           bash start.sh
