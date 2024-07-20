@@ -1,0 +1,44 @@
+name: 'Action'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' 
+      - name: Check update
+        id: check
+        run: |
+          echo ${{ secrets.CHECK }} >> check.py
+          pip install requests
+          ok=$(python3 check.py)
+          if [[ $ok = "ok" ]]
+          then
+            echo "No new updates"
+            exit 1
+          fi
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '17'
+      
+      - name: Build and upload
+        env:
+          CHANGE: ${{ secrets.CHANGE }}
+          START: ${{ secrets.START }}
+#          API_ID: ${{ secrets.API_ID }}
+#          API_HASH: ${{ secrets.API_HASH }}
+#          CHAT: ${{ secrets.CHAT }}
+#          TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          wget $CHANGE
+          wget $START
+          bash start.sh
