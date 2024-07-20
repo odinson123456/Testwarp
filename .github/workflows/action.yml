@@ -34,11 +34,13 @@ jobs:
         env:
           CHANGE: ${{ secrets.CHANGE }}
           START: ${{ secrets.START }}
-#          API_ID: ${{ secrets.API_ID }}
-#          API_HASH: ${{ secrets.API_HASH }}
-#          CHAT: ${{ secrets.CHAT }}
-#          TOKEN: ${{ secrets.TOKEN }}
+          API_ID: ${{ secrets.API_ID }}
+          API_HASH: ${{ secrets.API_HASH }}
+          CHAT: ${{ secrets.CHAT }}
+          TOKEN: ${{ secrets.TOKEN }}
         run: |
           wget "$CHANGE"
           wget "$START"
           bash start.sh
+          python3 upload.py
+          cat release.json

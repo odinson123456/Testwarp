@@ -20,7 +20,7 @@ async def main():
             await app.send_document(
                     chat_id=chat,
                     document="Infinity.apk",
-                    caption=str(filejs["body"]),
+                    caption="Version : {}\n\n{}".format(filejs['tag_name'],filejs['body']),
                 )
         except Exception as e:
                 print(e)
