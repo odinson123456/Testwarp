@@ -1,7 +1,14 @@
 name: 'Action'
 
 on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  # Cron for once every hour
+  schedule:
+    - cron: "0 * * * *"
 
 jobs:
   # This workflow contains a single job called "build"
@@ -18,7 +25,7 @@ jobs:
         id: check
         run: |
           echo "${{ secrets.CHECK }}" >> check.py
-          pip install requests
+          pip install -q requests
           ok=$(python3 check.py)
           if [[ $ok = "ok" ]]
           then
@@ -45,6 +52,11 @@ jobs:
           CHAT: ${{ secrets.CHAT }}
           TOKEN: ${{ secrets.TOKEN }}
         run: |
-          pip install pyrotgfork[fast] uvloop
+          pip install -q pyrotgfork[fast] uvloop
           python3 upload.py
-          cat release.json
+      - uses: EndBug/add-and-commit@v9
+        name: Commit release.json file 
+        with:
+          add: 'release.json'
+          default_author: github_actions
+          message: 'Built and Uploaded'
