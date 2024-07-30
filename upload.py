@@ -2,8 +2,14 @@ import asyncio
 import uvloop
 import json
 from os import getenv
+from datetime import datetime, timedelta
 from pyrogram import Client
 
+def timeformat(isotime):
+    utc_time = datetime.fromisoformat(isotime.replace('Z', '+00:00'))
+    ist_time = utc_time + timedelta(hours=5, minutes=30)
+    ist_formatted = ist_time.strftime("%d-%m-%Y %I:%M:%S %p IST")
+    return ist_formatted
 
 async def main():
     app = Client(
@@ -20,7 +26,7 @@ async def main():
             await app.send_document(
                     chat_id=chat,
                     document="Infinity.apk",
-                    caption="Version : {}\n\n{}".format(filejs['tag_name'],filejs['body']),
+                    caption="Version : {}\nReleased on : {}\n\n{}".format(filejs['tag_name'],timeformat(filejs['created_at']),filejs['body']),
                 )
         except Exception as e:
                 print(e)
